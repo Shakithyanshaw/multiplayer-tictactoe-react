@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useChannelStateContext, useChatContext } from 'stream-chat-react';
 import Square from './Square';
-
-function Board() {
+import { Patterns } from '../WinningPatterns';
+function Board({ result, setResult }) {
   const [board, setBoard] = useState(['', '', '', '', '', '', '', '', '']);
   const [player, setPlayer] = useState('X');
   const [turn, setTurn] = useState('X');
@@ -10,6 +10,10 @@ function Board() {
   const { channel } = useChannelStateContext();
   const { client } = useChatContext();
 
+  useEffect(() => {
+    checkIfTie();
+    checkWin();
+  }, [board]);
   const chooseSquare = async (square) => {
     if (turn === player && board[square] === '') {
       setTurn(player === 'X' ? 'O' : 'X');
@@ -18,7 +22,6 @@ function Board() {
         type: 'game-move',
         data: { square, player },
       });
-
       setBoard(
         board.map((val, idx) => {
           if (idx === square && val === '') {
@@ -27,6 +30,36 @@ function Board() {
           return val;
         })
       );
+    }
+  };
+
+  const checkWin = () => {
+    Patterns.forEach((currPattern) => {
+      const firstPlayer = board[currPattern[0]];
+      if (firstPlayer === '') return;
+      let foundWinningPattern = true;
+      currPattern.forEach((idx) => {
+        if (board[idx] !== firstPlayer) {
+          foundWinningPattern = false;
+        }
+      });
+
+      if (foundWinningPattern) {
+        setResult({ winner: board[currPattern[0]], state: 'won' });
+      }
+    });
+  };
+
+  const checkIfTie = () => {
+    let filled = true;
+    board.forEach((square) => {
+      if (square === '') {
+        filled = false;
+      }
+    });
+
+    if (filled) {
+      setResult({ winner: 'none', state: 'tie' });
     }
   };
 
