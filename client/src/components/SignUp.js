@@ -19,7 +19,6 @@ function SignUp({ setIsAuth }) {
       setIsAuth(true);
     });
   };
-
   return (
     <div className="signUp">
       <label> Sign Up</label>
