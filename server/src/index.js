@@ -7,9 +7,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-const api_key = 'nv2zh5h8pmyh';
-const api_secret =
-  'gf4wmuf9rj9vzfpvrdjkwr7qapwty64jdrb48qv7dmqejhrfhc6z94zr2atzcw4q';
+const api_key = 'your_api_key';
+const api_secret = 'your_api_secret';
 const serverClient = StreamChat.getInstance(api_key, api_secret);
 
 app.post('/signup', async (req, res) => {
